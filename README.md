@@ -22,5 +22,5 @@ Toggle the features with their hotkeys.
 - Add some kind of module system to manage all the features
 
 <sub>
-This is my first Zig project ever so this code might be not that great.
+This is my first Zig project ever so this code might not be that great.
 </sub>
