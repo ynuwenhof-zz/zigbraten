@@ -1,10 +1,18 @@
 const std = @import("std");
-const testing = std.testing;
+const windows = std.os.windows;
 
-export fn add(a: i32, b: i32) i32 {
-    return a + b;
-}
+const BOOL = windows.BOOL;
+const DWORD = windows.DWORD;
+const LPVOID = windows.LPVOID;
+const HINSTANCE = windows.HINSTANCE;
 
-test "basic add functionality" {
-    try testing.expect(add(3, 7) == 10);
+const dll_process_attach = 1;
+
+pub export fn DllMain(_: HINSTANCE, fdw_reason: DWORD, _: LPVOID) BOOL {
+    switch (fdw_reason) {
+        dll_process_attach => {},
+        else => {},
+    }
+
+    return 1;
 }
