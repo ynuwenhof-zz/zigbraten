@@ -3,16 +3,20 @@ const math = std.math;
 const windows = std.os.windows;
 const kernel32 = windows.kernel32;
 
+const INT = windows.INT;
 const BOOL = windows.BOOL;
 const CHAR = windows.CHAR;
+const SHORT = windows.SHORT;
 const DWORD = windows.DWORD;
 const WINAPI = windows.WINAPI;
 const LPVOID = windows.LPVOID;
 const HMODULE = windows.HMODULE;
 const HINSTANCE = windows.HINSTANCE;
 
+const vk_r_shift = 0xA1;
 const dll_process_attach = 1;
 
+extern "user32" fn GetAsyncKeyState(vKey: INT) callconv(WINAPI) SHORT;
 extern "kernel32" fn DisableThreadLibraryCalls(hLibModule: HMODULE) callconv(WINAPI) BOOL;
 
 const Vec3 = struct {
@@ -68,8 +72,13 @@ export fn entry(_: *anyopaque) DWORD {
     const entity_list = @intToPtr(*u64, (base_addr + 0x346C90));
     const entity_list_count = @intToPtr(*i32, (base_addr + 0x3472EC));
 
+    var enabled = false;
     while (true) {
-        if (local_entity.*.is_dead) continue;
+        if ((GetAsyncKeyState(vk_r_shift) & 1) != 0) {
+            enabled = !enabled;
+        }
+
+        if (!enabled or local_entity.*.is_dead) continue;
 
         var optional_target: ?*Entity = null;
         var lowest_coefficient: f32 = math.f32_max;
