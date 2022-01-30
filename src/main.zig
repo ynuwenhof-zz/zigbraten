@@ -34,6 +34,17 @@ const Vec3 = struct {
     }
 };
 
+const Entity = struct {
+    pad_0000: [48]CHAR,
+    pos: Vec3,
+    angle: Vec3,
+    pad_0048: [47]CHAR,
+    is_dead: bool,
+    pad_0078: [280]CHAR,
+    delay: i32,
+    pad_0194: [788]CHAR,
+};
+
 pub export fn DllMain(hinst_dll: HINSTANCE, fdw_reason: DWORD, _: LPVOID) BOOL {
     switch (fdw_reason) {
         dll_process_attach => {
