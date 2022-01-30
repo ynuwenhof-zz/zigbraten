@@ -1,9 +1,12 @@
 const std = @import("std");
+const math = std.math;
 const windows = std.os.windows;
 const kernel32 = windows.kernel32;
 
 const BOOL = windows.BOOL;
+const CHAR = windows.CHAR;
 const DWORD = windows.DWORD;
+const WINAPI = windows.WINAPI;
 const LPVOID = windows.LPVOID;
 const HMODULE = windows.HMODULE;
 const HINSTANCE = windows.HINSTANCE;
@@ -18,15 +21,13 @@ const Vec3 = struct {
     z: f32,
 
     pub fn distance(self: Vec3, other: Vec3) f32 {
-        return math.sqrt(
-            math.pow(f32, other.x - self.x, 2.0) +
+        return math.sqrt(math.pow(f32, other.x - self.x, 2.0) +
             math.pow(f32, other.y - self.y, 2.0) +
-            math.pow(f32, other.z - self.z, 2.0)
-        );
+            math.pow(f32, other.z - self.z, 2.0));
     }
 
     pub fn angle(self: Vec3, other: Vec3) Vec3 {
-        return Vec3 {
+        return Vec3{
             .x = -math.atan2(f32, other.x - self.x, other.y - self.y) / math.pi * 180.0,
             .y = math.asin((other.z - self.z) / self.distance(other)) * 180.0 / math.pi,
             .z = 0.0,
