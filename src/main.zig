@@ -63,5 +63,36 @@ pub export fn DllMain(hinst_dll: HINSTANCE, fdw_reason: DWORD, _: LPVOID) BOOL {
 }
 
 export fn entry(_: *anyopaque) DWORD {
-    return 0;
+    const base_addr = @ptrToInt(kernel32.GetModuleHandleW(null).?);
+    const local_entity = @intToPtr(**Entity, (base_addr + 0x002A3528)).*;
+    const entity_list = @intToPtr(*u64, (base_addr + 0x346C90));
+    const entity_list_count = @intToPtr(*i32, (base_addr + 0x3472EC));
+
+    while (true) {
+        if (local_entity.*.is_dead) continue;
+
+        var optional_target: ?*Entity = null;
+        var lowest_coefficient: f32 = math.f32_max;
+
+        var i: usize = 0;
+        while (i < entity_list_count.*) {
+            const entity = @intToPtr(**Entity, entity_list.* + i * 0x08).*;
+            if (entity.*.is_dead) continue;
+
+            const angle = local_entity.*.pos.angle(entity.*.pos).distance(local_entity.*.angle);
+            const distance = local_entity.*.pos.distance(entity.*.pos);
+            const coefficient = distance * 0.3 + angle * 0.7;
+
+            if (coefficient < lowest_coefficient) {
+                lowest_coefficient = coefficient;
+                optional_target = entity;
+            }
+
+            i += 1;
+        }
+
+        if (optional_target) |target| {
+            local_entity.*.angle = local_entity.*.pos.angle(target.*.pos);
+        }
+    }
 }
